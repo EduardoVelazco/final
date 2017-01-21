@@ -1,0 +1,181 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Control</title>
+  <meta name="description" content="">
+  <meta name="author" content="Eduardo">
+  <script src="js/jquery-1.9.1.js"></script>
+  <link rel="stylesheet" type="text/css" href="css/estilo.css"/> 
+  <link rel="stylesheet"  type="text/css"  href="css/bootstrap.min.css"/> 
+  </head>
+
+<body> 
+	<div class="container">
+		<header><br>
+			    <center><h4>Control</h4>
+			    	<img style="-webkit-user-select: none" src="http://192.168.0.102:8081/" >
+			    </center>
+			   <hr>
+			   <div class="cuadro_contenido">
+			<hr>
+			<h4 id="texto" class="btn btn-small disabled" disabled="disabled"></h4>
+			
+			</div>
+			
+			</header>
+            <section>
+            	<table border="0" align="center" cellpadding="20">
+               		<tr>
+            		<td></td>
+            		<td><img src="images/avanzo.png" class="boton" id="avanza" /></td>
+            		<td></td>
+            		</tr>
+            		<tr>
+            			<td><img src="images/izquierda.png" class="boton" id="izquierda"></td>
+            			<td><img src="images/parar.png" class="boton" id="para"></td>
+            			<td><img src="images/derecha.png" class="boton" id="derecha"></td>
+            		</tr>
+            		<tr>
+            			<td></td>
+            			<td><img src="images/atras.png" class="boton" id="atras"></td>
+            		     <td></td>
+            		</tr>
+            		<tr>
+            			
+                      <td><h2 id="salida1" class="btn btn-small disabled " disabled="disabled"></h2></td> 
+			          <td><h2 id="salida2" class="btn btn-small disabled" disabled="disabled"></h2></td>
+			          <td><h2 id="salida3" class="btn btn-small disabled" disabled="disabled"></h2></td>
+				
+			      </tr>
+            		<tr>
+            			<td><button id="sensorIzq" class="btn btn-success btn-lg">Sensor Izquierdo</button></td>
+            			<td><button id="sensorFrontal" class="btn btn-success btn-lg">Sensor Frontal</button></td>
+            			<td><button id="sensorDerecho" class="btn btn-success btn-lg">Sensor Derecho</button></td>
+            		</tr>
+            	</table>
+            </section>		
+			
+		
+	</div>
+    
+  <script type="text/javascript">
+var estado="";
+$(function(){
+$("#avanza").click(function(){
+	$('#texto').show().text("Avanza");
+	$("#texto").removeClass('btn-info btn-primary btn-success btn-inverse').addClass( "btn-danger" );
+	$(this).removeClass('boton').addClass( "boton_activo" );
+	$("#derecha").removeClass('boton_activo').addClass( "boton" );
+	$("#izquierda").removeClass('boton_activo').addClass( "boton" );
+	$("#atras").removeClass('boton_activo').addClass( "boton" );
+	$("#para").removeClass('boton_activo').addClass( "boton" );
+    window.estado=1;
+});
+$("#izquierda").click(function(){
+	$('#texto').show().text("Giro Izquierda");
+	$("#texto").removeClass('btn-danger btn-primary btn-success btn-inverse').addClass( "btn-info" );
+	$(this).removeClass('boton').addClass( "boton_activo" );
+	$("#avanza").removeClass('boton_activo').addClass( "boton" );
+	$("#derecha").removeClass('boton_activo').addClass( "boton" );
+	$("#atras").removeClass('boton_activo').addClass( "boton" );
+	$("#para").removeClass('boton_activo').addClass( "boton" );
+    window.estado=2;
+});
+$("#derecha").click(function(){
+	$('#texto').show().text("Giro Derecha");
+	$("#texto").removeClass('btn-primary btn-info btn-danger btn-inverse').addClass( "btn-success" );
+	$(this).removeClass('boton').addClass( "boton_activo" );
+	$("#avanza").removeClass('boton_activo').addClass( "boton" );
+	$("#izquierda").removeClass('boton_activo').addClass( "boton" );
+	$("#atras").removeClass('boton_activo').addClass( "boton" );
+	$("#para").removeClass('boton_activo').addClass( "boton" );
+    window.estado=3;
+});
+$("#atras").click(function(){
+	$('#texto').show().text("Retrocede");
+	$("#texto").removeClass('btn-success btn-info btn-danger btn-inverse').addClass( "btn-primary" );
+	$(this).removeClass('boton').addClass( "boton_activo" );
+	$("#avanza").removeClass('boton_activo').addClass( "boton" );
+	$("#izquierda").removeClass('boton_activo').addClass( "boton" );
+	$("#derecha").removeClass('boton_activo').addClass( "boton" );
+	$("#para").removeClass('boton_activo').addClass( "boton" );
+    window.estado=4;
+});
+$("#para").click(function(){
+	$('#texto').show().text("Detenido");
+	$("#texto").removeClass(' btn-primary btn-success btn-info btn-danger').addClass( "btn-inverse" );
+	$(this).removeClass('boton').addClass( "boton_activo" );
+	$("#avanza").removeClass('boton_activo').addClass( "boton" );
+	$("#izquierda").removeClass('boton_activo').addClass( "boton" );
+	$("#derecha").removeClass('boton_activo').addClass( "boton" );
+	$("#atras").removeClass('boton_activo').addClass( "boton" );
+    window.estado=5;
+ });
+$(this).click(function(){
+   console.log("estado: "+estado);
+	$.ajax({
+		data:{valor_estado: estado},
+		url:'procesa.php',
+		type:'POST',
+		success: function(response){
+			alert("Salida: midiendo"+response );
+		}
+	});
+  });
+
+});
+
+$('#sensorIzq').click(function(){
+         $('#sensorIzq').show().text("Midiendo sensor Izquierdo");
+              $('#salida1').hide('slow');
+               $.ajax({
+                 url:'php/sensorIzq.php',
+                  type:'POST',
+               
+               success: function (response){
+                 $('#salida1').show('slow');
+                  $('#salida1').html(response);
+                  $('#sensorIzq').show().text('Volver a Medir')
+                  }
+                 });
+});
+$('#sensorFrontal').click(function(){
+    		$('#sensorFrontal').show().text("Midiendo sensor frontal");
+                $('#salida2').hide('slow');
+    
+    	    	$.ajax({
+    		url:'php/sensorFrontal.php',
+                type:'POST',
+                 
+              success: function(response){
+                      $('#salida2').show('slow');
+                      $('#salida2').html(response);
+                      $('#sensorFrontal').show().text('Volver a Medir') 
+                     }
+    	          });
+    	});
+$('#sensorDerecho').click(function(){
+    		$('#sensorDerecho').show().text("Midiendo sensor Derecho");
+                $('#salida3').hide('slow');
+    
+    	    	$.ajax({
+    		url:'php/sensorDerecho.php',
+                type:'POST',
+                 
+              success: function(response){
+                      $('#salida3').show('slow');
+                      $('#salida3').html(response);
+                      $('#sensorDerecho').show().text("Volver a Medir")
+                     }
+    	          });
+    	});
+</script>
+
+</body>
+</html>
